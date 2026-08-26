@@ -1148,10 +1148,12 @@ button, input, select {
 
   /* En móviles: vídeo (Hijo 2) arriba, letra (Hijo 1) abajo */
   .eh-topic-body-inner > div:nth-child(2) {
+    grid-column: auto;
     grid-row: 1;
   }
 
   .eh-topic-body-inner > div:nth-child(1) {
+    grid-column: auto;
     grid-row: 2;
   }
 
