@@ -122,17 +122,17 @@ function gradeSongActivity(activityId) {
   });
 
   selects.forEach(function (select) {
-    const line = select.closest('.eh-lyrics-line');
+    select.classList.remove('correct', 'incorrect');
     if (!select.value) {
       unanswered++;
-      line.classList.add('unanswered');
       return;
     }
 
     if (select.value === select.dataset.correct) {
       score++;
+      select.classList.add('correct');
     } else {
-      line.classList.add('incorrect');
+      select.classList.add('incorrect');
     }
   });
 
@@ -587,6 +587,7 @@ function resetSongActivity(activityId) {
   const selects = activity.querySelectorAll('.eh-word-select');
   selects.forEach(select => {
     select.value = "";
+    select.classList.remove('correct', 'incorrect');
   });
 
   // Limpiar estilos de las líneas de la letra
@@ -615,34 +616,51 @@ function initSongListeners() {
   const songSelects = document.querySelectorAll('.eh-lyrics-line .eh-word-select');
   songSelects.forEach(select => {
     select.addEventListener('change', () => {
+      // 1. Calificar el select individual
+      select.classList.remove('correct', 'incorrect');
+      if (select.value) {
+        if (select.value === select.dataset.correct) {
+          select.classList.add('correct');
+        } else {
+          select.classList.add('incorrect');
+        }
+      }
+
+      // 2. Calificar la línea general
       const line = select.closest('.eh-lyrics-line');
       if (!line) return;
 
       const lineSelects = line.querySelectorAll('.eh-word-select');
       const status = line.querySelector('.eh-line-status');
       
-      let allAnswered = true;
+      let hasIncorrect = false;
       let allCorrect = true;
+      let allEmpty = true;
 
       lineSelects.forEach(sel => {
-        if (!sel.value) {
-          allAnswered = false;
-          allCorrect = false;
-        } else if (sel.value !== sel.dataset.correct) {
+        if (sel.value) {
+          allEmpty = false;
+          if (sel.value !== sel.dataset.correct) {
+            hasIncorrect = true;
+            allCorrect = false;
+          }
+        } else {
           allCorrect = false;
         }
       });
 
       line.classList.remove('correct', 'incorrect', 'unanswered');
 
-      if (!allAnswered) {
+      if (allEmpty) {
         if (status) status.textContent = '';
+      } else if (hasIncorrect) {
+        line.classList.add('incorrect');
+        if (status) status.textContent = '✗ MAL';
       } else if (allCorrect) {
         line.classList.add('correct');
         if (status) status.textContent = '✓ BIEN';
       } else {
-        line.classList.add('incorrect');
-        if (status) status.textContent = '✗ MAL';
+        if (status) status.textContent = '';
       }
     });
   });

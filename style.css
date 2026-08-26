@@ -934,6 +934,18 @@ button, input, select {
   box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
 }
 
+.eh-word-select.correct {
+  border-color: var(--accent-green) !important;
+  background-color: rgba(34, 197, 94, 0.08) !important;
+  color: var(--accent-green) !important;
+}
+
+.eh-word-select.incorrect {
+  border-color: var(--accent-red) !important;
+  background-color: rgba(220, 38, 38, 0.08) !important;
+  color: var(--accent-red) !important;
+}
+
 .eh-line-status {
   margin-left: auto;
   font-size: 11px;
