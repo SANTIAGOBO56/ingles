@@ -607,3 +607,46 @@ function resetSongActivity(activityId) {
     resultDiv.style.display = 'none';
   }
 }
+
+/* =========================================================
+   CALIFICACIÓN AUTOMÁTICA AL SELECCIONAR LA RESPUESTA
+========================================================= */
+function initSongListeners() {
+  const songSelects = document.querySelectorAll('.eh-lyrics-line .eh-word-select');
+  songSelects.forEach(select => {
+    select.addEventListener('change', () => {
+      const line = select.closest('.eh-lyrics-line');
+      if (!line) return;
+
+      const lineSelects = line.querySelectorAll('.eh-word-select');
+      const status = line.querySelector('.eh-line-status');
+      
+      let allAnswered = true;
+      let allCorrect = true;
+
+      lineSelects.forEach(sel => {
+        if (!sel.value) {
+          allAnswered = false;
+          allCorrect = false;
+        } else if (sel.value !== sel.dataset.correct) {
+          allCorrect = false;
+        }
+      });
+
+      line.classList.remove('correct', 'incorrect', 'unanswered');
+
+      if (!allAnswered) {
+        if (status) status.textContent = '';
+      } else if (allCorrect) {
+        line.classList.add('correct');
+        if (status) status.textContent = '✓ BIEN';
+      } else {
+        line.classList.add('incorrect');
+        if (status) status.textContent = '✗ MAL';
+      }
+    });
+  });
+}
+
+// Inicializar al cargar el script
+initSongListeners();
