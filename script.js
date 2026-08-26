@@ -109,17 +109,10 @@ function gradeSongActivity(activityId) {
   const activity = document.getElementById(activityId);
   if (!activity) return;
 
-  const lines = activity.querySelectorAll('.eh-lyrics-line');
   const selects = activity.querySelectorAll('.eh-word-select');
   let score = 0;
   const total = selects.length;
   let unanswered = 0;
-
-  lines.forEach(function (line) {
-    line.classList.remove('correct', 'incorrect', 'unanswered');
-    const status = line.querySelector('.eh-line-status');
-    if (status) status.textContent = '';
-  });
 
   selects.forEach(function (select) {
     select.classList.remove('correct', 'incorrect');
@@ -133,37 +126,6 @@ function gradeSongActivity(activityId) {
       select.classList.add('correct');
     } else {
       select.classList.add('incorrect');
-    }
-  });
-
-  lines.forEach(function (line) {
-    const lineSelects = line.querySelectorAll('.eh-word-select');
-    if (!lineSelects.length) return;
-
-    const status = line.querySelector('.eh-line-status');
-    let allAnswered = true;
-    let allCorrect = true;
-
-    lineSelects.forEach(function (select) {
-      if (!select.value) {
-        allAnswered = false;
-        allCorrect = false;
-      } else if (select.value !== select.dataset.correct) {
-        allCorrect = false;
-      }
-    });
-
-    line.classList.remove('correct', 'incorrect', 'unanswered');
-
-    if (!allAnswered) {
-      line.classList.add('unanswered');
-      if (status) status.textContent = 'PENDIENTE';
-    } else if (allCorrect) {
-      line.classList.add('correct');
-      if (status) status.textContent = '✓ BIEN';
-    } else {
-      line.classList.add('incorrect');
-      if (status) status.textContent = '✗ MAL';
     }
   });
 
@@ -616,7 +578,7 @@ function initSongListeners() {
   const songSelects = document.querySelectorAll('.eh-lyrics-line .eh-word-select');
   songSelects.forEach(select => {
     select.addEventListener('change', () => {
-      // 1. Calificar el select individual
+      // Calificar el select individual de forma 100% independiente
       select.classList.remove('correct', 'incorrect');
       if (select.value) {
         if (select.value === select.dataset.correct) {
@@ -624,43 +586,6 @@ function initSongListeners() {
         } else {
           select.classList.add('incorrect');
         }
-      }
-
-      // 2. Calificar la línea general
-      const line = select.closest('.eh-lyrics-line');
-      if (!line) return;
-
-      const lineSelects = line.querySelectorAll('.eh-word-select');
-      const status = line.querySelector('.eh-line-status');
-      
-      let hasIncorrect = false;
-      let allCorrect = true;
-      let allEmpty = true;
-
-      lineSelects.forEach(sel => {
-        if (sel.value) {
-          allEmpty = false;
-          if (sel.value !== sel.dataset.correct) {
-            hasIncorrect = true;
-            allCorrect = false;
-          }
-        } else {
-          allCorrect = false;
-        }
-      });
-
-      line.classList.remove('correct', 'incorrect', 'unanswered');
-
-      if (allEmpty) {
-        if (status) status.textContent = '';
-      } else if (hasIncorrect) {
-        line.classList.add('incorrect');
-        if (status) status.textContent = '✗ MAL';
-      } else if (allCorrect) {
-        line.classList.add('correct');
-        if (status) status.textContent = '✓ BIEN';
-      } else {
-        if (status) status.textContent = '';
       }
     });
   });
